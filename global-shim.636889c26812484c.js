@@ -1,0 +1,1 @@
+typeof global>"u"&&(window.global=window);
