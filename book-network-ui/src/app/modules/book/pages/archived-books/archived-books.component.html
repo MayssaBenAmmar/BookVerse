@@ -1,0 +1,131 @@
+<!-- Revised archived-books.component.html -->
+<div class="library-container">
+  <div class="book-header">
+    <h2 class="section-title">Archived Books</h2>
+    <div class="book-divider">
+      <span class="divider-line"></span>
+      <i class="fas fa-book-open divider-icon"></i>
+      <span class="divider-line"></span>
+    </div>
+  </div>
+
+  <!-- Message Alert -->
+  <div
+    *ngIf="message"
+    class="message-alert"
+    [ngClass]="{
+      'error-alert': level === 'error',
+      'success-alert': level === 'success'
+    }"
+  >
+    <i class="fas" [ngClass]="{'fa-exclamation-circle': level === 'error', 'fa-check-circle': level === 'success'}"></i>
+    <p>{{ message }}</p>
+    <button class="close-alert" (click)="message = ''">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="library-controls">
+    <div class="filter-section">
+      <button class="library-btn filter-btn">
+        <i class="fas fa-filter"></i>
+        <span>Filter</span>
+      </button>
+
+      <button class="library-btn sort-btn">
+        <i class="fas fa-sort"></i>
+        <span>Sort by</span>
+      </button>
+    </div>
+
+    <div class="book-count">
+      <i class="fas fa-book"></i>
+      <span>{{ bookResponse?.totalElements || 0 }} archived books</span>
+    </div>
+  </div>
+
+  <!-- Book Shelf -->
+  <div class="book-shelf">
+    <app-book-card
+      *ngFor="let book of bookResponse?.content || []"
+      [book]="book"
+      (borrow)="borrowBook($event)"
+      (details)="displayBookDetails($event)"
+      class="shelf-book"
+    ></app-book-card>
+
+    <!-- Empty Shelf -->
+    <div *ngIf="!bookResponse?.content?.length" class="empty-shelf">
+      <div class="empty-bookend">
+        <i class="fas fa-archive"></i>
+      </div>
+      <div class="empty-message">
+        <h3>Your archive shelf is empty</h3>
+        <p>Books you archive will appear here for future reference</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="library-pagination" *ngIf="(bookResponse?.totalPages || 0) > 1">
+    <div class="pagination-controls">
+      <button
+        class="page-btn first-page"
+        [disabled]="page === 0"
+        (click)="goToFirstPage()"
+        [class.disabled]="page === 0"
+        aria-label="First page"
+      >
+        <i class="fas fa-angles-left"></i>
+      </button>
+
+      <button
+        class="page-btn prev-page"
+        [disabled]="page === 0"
+        (click)="goToPreviousPage()"
+        [class.disabled]="page === 0"
+        aria-label="Previous page"
+      >
+        <i class="fas fa-angle-left"></i>
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let pageIndex of pages"
+          (click)="gotToPage(pageIndex)"
+          class="page-number"
+          [class.active]="page === pageIndex"
+        >
+          {{ pageIndex + 1 }}
+        </button>
+      </div>
+
+      <button
+        class="page-btn next-page"
+        [disabled]="isLastPage"
+        (click)="goToNextPage()"
+        [class.disabled]="isLastPage"
+        aria-label="Next page"
+      >
+        <i class="fas fa-angle-right"></i>
+      </button>
+
+      <button
+        class="page-btn last-page"
+        [disabled]="isLastPage"
+        (click)="goToLastPage()"
+        [class.disabled]="isLastPage"
+        aria-label="Last page"
+      >
+        <i class="fas fa-angles-right"></i>
+      </button>
+    </div>
+
+    <div class="page-indicator">
+      <span class="bookmark">
+        <i class="fas fa-bookmark"></i>
+        <span class="bookmark-text">Page {{ page + 1 }} of {{ bookResponse?.totalPages || 1 }}</span>
+      </span>
+    </div>
+  </div>
+</div>

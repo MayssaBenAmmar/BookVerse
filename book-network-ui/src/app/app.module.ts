@@ -1,16 +1,18 @@
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+// ===== app.module.ts (CORRECTED) =====
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BookModule } from './modules/book/book.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
-import {FormsModule} from '@angular/forms';
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
-import {HttpTokenInterceptor} from './services/interceptor/http-token.interceptor';
-import { ActivateAccountComponent } from './pages/activate-account/activate-account.component';
-import {CodeInputModule} from 'angular-code-input';
-import {KeycloakService} from './services/keycloak/keycloak.service';
+
+import { CodeInputModule } from 'angular-code-input';
+import { HttpTokenInterceptor } from './services/interceptor/http-token.interceptor';
+import { KeycloakService } from './services/keycloak/keycloak.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatCardModule } from "@angular/material/card";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 export function kcFactory(kcService: KeycloakService) {
   return () => kcService.init();
@@ -18,20 +20,22 @@ export function kcFactory(kcService: KeycloakService) {
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    ActivateAccountComponent
+    AppComponent
+    // Removed FavoritesComponent and other book-related components
+    // They should only be declared in BookModule
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-        HttpClientModule,
-        CodeInputModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    CodeInputModule,
+    BookModule,
+    BrowserAnimationsModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+  ],
   providers: [
-    HttpClient,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpTokenInterceptor,
@@ -39,11 +43,10 @@ export function kcFactory(kcService: KeycloakService) {
     },
     {
       provide: APP_INITIALIZER,
-      deps: [KeycloakService],
       useFactory: kcFactory,
+      deps: [KeycloakService],
       multi: true
     }
-
   ],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,179 @@
+<!-- dashboard.component.html - Sans Daily Activity -->
+<div class="dashboard-container">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Dashboard</h1>
+      <p>Welcome back! Here's what's happening with your books.</p>
+    </div>
+    <button
+      (click)="refreshDashboard()"
+      [disabled]="isRefreshing"
+      class="refresh-btn"
+      [class.loading]="isRefreshing">
+      <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i>
+      {{ isRefreshing ? 'Refreshing...' : 'Refresh' }}
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading && stats" class="dashboard-content">
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+
+      <!-- Total Books -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-text">
+            <p class="stat-label">Total Books</p>
+            <p class="stat-value">{{ stats.totalBooks }}</p>
+          </div>
+          <div class="stat-icon blue">
+            <i class="fas fa-book"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Created Books -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-text">
+            <p class="stat-label">Created Books</p>
+            <p class="stat-value">{{ stats.createdBooks }}</p>
+          </div>
+          <div class="stat-icon green">
+            <i class="fas fa-plus"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Favorited Books -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-text">
+            <p class="stat-label">Favorited</p>
+            <p class="stat-value">{{ stats.favoritedBooks }}</p>
+          </div>
+          <div class="stat-icon red">
+            <i class="fas fa-heart"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Activities -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-text">
+            <p class="stat-label">Today's Activities</p>
+            <p class="stat-value">{{ stats.todayActivities }}</p>
+          </div>
+          <div class="stat-icon orange">
+            <i class="fas fa-chart-line"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section - Monthly Chart Only -->
+    <div class="chart-section">
+      <div class="chart-card full-width">
+        <div class="card-header">
+          <h3>Monthly Book Activity</h3>
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="chart-container">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress and Activities Section -->
+    <div class="bottom-grid">
+
+      <!-- Progress Bars -->
+      <div class="progress-card">
+        <div class="card-header">
+          <h3>Your Progress</h3>
+          <i class="fas fa-trophy"></i>
+        </div>
+
+        <div class="progress-list">
+          <div *ngFor="let progress of progressBars" class="progress-item">
+            <div class="progress-header">
+              <div class="progress-info">
+                <i [class]="getIconClass(progress.icon)" [ngClass]="progress.color + '-icon'"></i>
+                <span class="progress-title">{{ progress.title }}</span>
+              </div>
+              <span class="progress-percentage">{{ progress.percentage.toFixed(1) }}%</span>
+            </div>
+
+            <div class="progress-bar-container">
+              <div class="progress-bar"
+                   [ngClass]="progress.color + '-bar'"
+                   [style.width.%]="progress.percentage"></div>
+            </div>
+
+            <p class="progress-description">{{ progress.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activities -->
+      <div class="activities-card">
+        <div class="card-header">
+          <h3>Recent Activities</h3>
+          <i class="fas fa-clock"></i>
+        </div>
+
+        <div class="activities-list">
+          <div *ngFor="let activity of recentActivities" class="activity-item">
+
+            <div class="activity-icon">
+              <i class="fas fa-user"></i>
+            </div>
+
+            <div class="activity-content">
+              <div class="activity-header">
+                <span class="activity-username">{{ activity.username }}</span>
+                <span class="activity-time">{{ activity.timeAgo }}</span>
+              </div>
+
+              <p class="activity-description">
+                <span class="activity-action">{{ activity.action }}</span>
+                <span *ngIf="activity.entityName">"{{ activity.entityName }}"</span>
+              </p>
+
+              <p *ngIf="activity.details" class="activity-details">
+                {{ activity.details }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Empty state -->
+          <div *ngIf="recentActivities.length === 0" class="empty-state">
+            <i class="fas fa-history"></i>
+            <p>No recent activities found</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && !stats" class="error-state">
+    <i class="fas fa-exclamation-triangle"></i>
+    <h3>Unable to load dashboard</h3>
+    <p>There was an error loading your dashboard data.</p>
+    <button (click)="loadDashboardData()" class="retry-btn">
+      Try Again
+    </button>
+  </div>
+</div>

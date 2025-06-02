@@ -32,20 +32,14 @@ import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.EAGER;
 
-
-@Getter
-@Setter
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
-// @Entity
-// @Table(name = "_user")
-// @EntityListeners(AuditingEntityListener.class)
+@Getter @Setter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
+@Entity @Table(name = "_user")
+@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String firstname;
     private String lastname;
     private LocalDate dateOfBirth;
@@ -54,6 +48,18 @@ public class User implements UserDetails, Principal {
     private String password;
     private boolean accountLocked;
     private boolean enabled;
+
+    // Add a new field for username
+    private String username;
+
+    // ✅ NOUVEAUX CHAMPS AJOUTÉS
+    @Column(length = 500)
+    private String bio;
+
+    @Column
+    private String profileImageUrl;
+    // ✅ FIN DES NOUVEAUX CHAMPS
+
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
     @OneToMany(mappedBy = "owner")
@@ -84,7 +90,7 @@ public class User implements UserDetails, Principal {
 
     @Override
     public String getUsername() {
-        return email;
+        return username != null ? username : email;
     }
 
     @Override
@@ -113,7 +119,7 @@ public class User implements UserDetails, Principal {
 
     @Override
     public String getName() {
-        return email;
+        return username != null ? username : email;
     }
 
     public String getFullName() {

@@ -1,78 +1,173 @@
-<h3>My books list</h3>
-<hr>
-<div class="d-flex justify-content-end mb-3">
-  <a routerLink="/books/manage" class="btn btn-outline-primary">
-    <i class="fas fa-plus"></i>&nbsp;New book
-  </a>
-</div>
-<div class="d-flex justify-content-start gap-4 flex-wrap">
-  <app-book-card
-    *ngFor="let book of bookResponse.content"
-    [book]="book"
-    [manage]="true"
-    (archive)="archiveBook($event)"
-    (share)="shareBook($event)"
-    (edit)="editBook($event)"
-  ></app-book-card>
-</div>
-<div class="d-flex justify-content-center mt-3">
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      <li class="page-item">
-        <a
-          (click)="goToFirstPage()"
-          class="page-link"
-          href="javascript:void(0)"
-          aria-label="Previous"
-          [class.disabled]="page === 0"
-        >
-          <i class="fa-solid fa-angles-left"></i>
-        </a>
-      </li>
-      <li class="page-item">
-        <a
-          (click)="goToPreviousPage()"
-          class="page-link"
-          href="javascript:void(0)"
-          aria-label="Previous"
-          [class.disabled]="page === 0"
-        >
-          <i class="fa-solid fa-angle-left"></i>
-        </a>
-      </li>
-      <li
-        class="page-item"
-        *ngFor="let pageIndex of pages"
+<!-- Revised my-books.component.html -->
+<div class="library-container">
+  <div class="book-header">
+    <h2 class="section-title">My Books</h2>
+    <div class="book-divider">
+      <span class="divider-line"></span>
+      <i class="fas fa-book divider-icon"></i>
+      <span class="divider-line"></span>
+    </div>
+  </div>
+
+  <!-- Message Alert (add this if you want to show messages) -->
+  <div
+    *ngIf="message"
+    class="message-alert"
+    [ngClass]="{
+      'error-alert': level === 'error',
+      'success-alert': level === 'success'
+    }"
+  >
+    <i class="fas" [ngClass]="{'fa-exclamation-circle': level === 'error', 'fa-check-circle': level === 'success'}"></i>
+    <p>{{ message }}</p>
+    <button class="close-alert" (click)="message = ''">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="library-controls">
+    <div class="filter-section">
+      <!-- Add New Book Button -->
+      <a routerLink="/books/manage" class="library-btn add-book-btn">
+        <i class="fas fa-plus"></i>
+        <span>New Book</span>
+      </a>
+
+      <button class="library-btn filter-btn">
+        <i class="fas fa-filter"></i>
+        <span>Filter</span>
+      </button>
+
+      <button class="library-btn sort-btn">
+        <i class="fas fa-sort"></i>
+        <span>Sort by</span>
+      </button>
+    </div>
+
+    <div class="book-count">
+      <i class="fas fa-book"></i>
+      <span>{{ bookResponse?.totalElements || 0 }} books</span>
+    </div>
+  </div>
+
+  <!-- Main Book (from vector search) -->
+  <div *ngIf="mainBook" class="featured-book-section">
+    <h3 class="feature-title">Main Book</h3>
+    <div class="featured-book-wrapper">
+      <app-book-card
+        [book]="mainBook"
+        [manage]="true"
+        (archive)="archiveBook($event)"
+        (share)="shareBook($event)"
+        (edit)="editBook($event)"
+        (bookDeleted)="onDeleteBook($event)"
+        class="featured-book"
+      ></app-book-card>
+    </div>
+  </div>
+
+  <!-- Suggested Books (if vector search active) -->
+  <div *ngIf="mainBook" class="suggested-books-section">
+    <h3 class="feature-title">Suggested Books</h3>
+    <div class="book-shelf">
+      <app-book-card
+        *ngFor="let book of suggestedBooks"
+        [book]="book"
+        [manage]="true"
+        (archive)="archiveBook($event)"
+        (share)="shareBook($event)"
+        (edit)="editBook($event)"
+        (bookDeleted)="onDeleteBook($event)"
+        class="shelf-book"
+      ></app-book-card>
+    </div>
+  </div>
+
+  <!-- Default My Books View (if not searching) -->
+  <div *ngIf="!mainBook" class="book-shelf">
+    <app-book-card
+      *ngFor="let book of bookResponse.content"
+      [book]="book"
+      [manage]="true"
+      (archive)="archiveBook($event)"
+      (share)="shareBook($event)"
+      (edit)="editBook($event)"
+      (bookDeleted)="onDeleteBook($event)"
+      class="shelf-book"
+    ></app-book-card>
+
+    <!-- Empty Shelf Message (if no books) -->
+    <div *ngIf="!bookResponse?.content?.length" class="empty-shelf">
+      <div class="empty-bookend">
+        <i class="fas fa-book"></i>
+      </div>
+      <div class="empty-message">
+        <h3>Your bookshelf is empty</h3>
+        <p>Add your first book to start your collection</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination (only visible when not in vector search mode) -->
+  <div class="library-pagination" *ngIf="!mainBook && (bookResponse?.totalPages || 0) > 1">
+    <div class="pagination-controls">
+      <button
+        class="page-btn first-page"
+        [disabled]="page === 0"
+        (click)="goToFirstPage()"
+        [class.disabled]="page === 0"
+        aria-label="First page"
       >
-        <a
+        <i class="fas fa-angles-left"></i>
+      </button>
+
+      <button
+        class="page-btn prev-page"
+        [disabled]="page === 0"
+        (click)="goToPreviousPage()"
+        [class.disabled]="page === 0"
+        aria-label="Previous page"
+      >
+        <i class="fas fa-angle-left"></i>
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let pageIndex of pages"
           (click)="gotToPage(pageIndex)"
-          class="page-link"
+          class="page-number"
           [class.active]="page === pageIndex"
-          href="javascript:void(0)"
-        >{{ pageIndex + 1 }}</a>
-      </li>
-      <li class="page-item">
-        <a
-          (click)="goToNextPage()"
-          class="page-link"
-          href="javascript:void(0)"
-          aria-label="Next"
-          [class.disabled]="isLastPage"
         >
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-      </li>
-      <li class="page-item">
-        <a
-          (click)="goToLastPage()"
-          class="page-link"
-          href="javascript:void(0)"
-          aria-label="Next"
-          [class.disabled]="isLastPage"
-        >
-          <i class="fa-solid fa-angles-right"></i>
-        </a>
-      </li>
-    </ul>
-  </nav>
+          {{ pageIndex + 1 }}
+        </button>
+      </div>
+
+      <button
+        class="page-btn next-page"
+        [disabled]="isLastPage"
+        (click)="goToNextPage()"
+        [class.disabled]="isLastPage"
+        aria-label="Next page"
+      >
+        <i class="fas fa-angle-right"></i>
+      </button>
+
+      <button
+        class="page-btn last-page"
+        [disabled]="isLastPage"
+        (click)="goToLastPage()"
+        [class.disabled]="isLastPage"
+        aria-label="Last page"
+      >
+        <i class="fas fa-angles-right"></i>
+      </button>
+    </div>
+
+    <div class="page-indicator">
+      <span class="bookmark">
+        <i class="fas fa-bookmark"></i>
+        <span class="bookmark-text">Page {{ page + 1 }} of {{ bookResponse?.totalPages || 1 }}</span>
+      </span>
+    </div>
+  </div>
 </div>

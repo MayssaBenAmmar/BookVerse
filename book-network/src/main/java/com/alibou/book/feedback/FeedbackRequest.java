@@ -17,6 +17,6 @@ public record FeedbackRequest(
         @NotBlank(message = "203")
         String comment,
         @NotNull(message = "204")
-        Integer bookId
+        Long bookId
 ) {
 }

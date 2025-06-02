@@ -12,5 +12,5 @@ public interface FeedBackRepository extends JpaRepository<Feedback, Integer> {
             FROM Feedback  feedback
             WHERE feedback.book.id = :bookId
 """)
-    Page<Feedback> findAllByBookId(@Param("bookId") Integer bookId, Pageable pageable);
+    Page<Feedback> findAllByBookId(@Param("bookId") Long bookId, Pageable pageable);
 }

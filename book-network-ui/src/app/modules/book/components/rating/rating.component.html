@@ -1,13 +1,35 @@
 <!-- rating.component.html -->
+<div class="rating-container">
+  <div class="stars" [class.interactive]="!readonly">
 
-<div class="rating">
-  <ng-container *ngFor="let _ of [].constructor(fullStars); let i = index">
-    <i class="fas fa-star text-warning"></i>
-  </ng-container>
-  <ng-container *ngIf="hasHalfStar">
-    <i class="fas fa-star-half-alt text-warning"></i>
-  </ng-container>
-  <ng-container *ngFor="let _ of [].constructor(emptyStars); let i = index">
-    <i class="far fa-star"></i>
-  </ng-container>
+    <!-- Full Stars -->
+    <i *ngFor="let _ of [].constructor(fullStars); let i = index"
+       class="fas fa-star star filled"
+       [class.clickable]="!readonly"
+       (click)="onStarClick(i + 1)"
+       (mouseenter)="onStarHover(i + 1)">
+    </i>
+
+    <!-- Half Star -->
+    <i *ngIf="hasHalfStar"
+       class="fas fa-star-half-alt star half-filled"
+       [class.clickable]="!readonly"
+       (click)="onStarClick(fullStars + 1)"
+       (mouseenter)="onStarHover(fullStars + 1)">
+    </i>
+
+    <!-- Empty Stars -->
+    <i *ngFor="let _ of [].constructor(emptyStars); let i = index"
+       class="far fa-star star empty"
+       [class.clickable]="!readonly"
+       (click)="onStarClick(fullStars + (hasHalfStar ? 1 : 0) + i + 1)"
+       (mouseenter)="onStarHover(fullStars + (hasHalfStar ? 1 : 0) + i + 1)">
+    </i>
+
+  </div>
+
+  <!-- Rating value display -->
+  <span *ngIf="showRatingValue && rating > 0" class="rating-value">
+    {{ formattedRating }}
+  </span>
 </div>

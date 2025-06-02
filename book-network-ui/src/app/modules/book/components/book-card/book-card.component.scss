@@ -1,9 +1,476 @@
-div {
-  &.card {
-    max-height: 450px;
-    min-height: 450px;
+// book-card.component.scss
+// Variables
+$primary: #6366f1;
+$primary-light: #818cf8;
+$secondary: #64748b;
+$success: #22c55e;
+$danger: #ef4444;
+$warning: #f59e0b;
+$info: #3b82f6;
+$light: #f1f5f9;
+$dark: #334155;
+$white: #ffffff;
+$black: #1e293b;
+
+$theme-gradient: linear-gradient(135deg, $primary, darken($primary, 15%));
+$card-radius: 16px;
+$transition-base: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+// Main Card Styling
+.book-card {
+  position: relative;
+  width: 300px;
+  height: 450px;
+  background-color: $white;
+  border-radius: $card-radius;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: $transition-base;
+  cursor: pointer;
+  margin: 1rem;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+
+    .book-cover {
+      transform: scale(1.08);
+    }
+
+    .cover-overlay {
+      opacity: 0.7;
+    }
+
+    .book-title {
+      color: $primary;
+    }
+  }
+
+  &.shareable {
+    border-left: 4px solid $success;
+  }
+
+  &.archived {
+    border-left: 4px solid $warning;
+    opacity: 0.8;
   }
 }
-i {
-  cursor: pointer;
+
+// Status Ribbon
+.status-ribbon {
+  position: absolute;
+  top: 20px;
+  left: -30px;
+  transform: rotate(-45deg);
+  z-index: 2;
+
+  span {
+    display: block;
+    width: 120px;
+    background-color: rgba($black, 0.8);
+    color: $white;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .book-archived & span {
+    background-color: rgba($warning, 0.9);
+  }
+
+  .book-shareable & span {
+    background-color: rgba($success, 0.9);
+  }
+}
+
+// Book Cover
+.book-cover-container {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.cover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba($black, 0.8) 0%, rgba($black, 0) 50%);
+  opacity: 0.5;
+  transition: $transition-base;
+}
+
+// Genre Badge
+.genre-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 2;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+
+    i {
+      margin-right: 4px;
+      font-size: 0.8rem;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    &.badge-romance {
+      background: linear-gradient(135deg, #ff6b81, #ff4757);
+      color: $white;
+    }
+
+    &.badge-horror {
+      background: linear-gradient(135deg, #2f3542, #1e272e);
+      color: $white;
+    }
+
+    &.badge-comedy {
+      background: linear-gradient(135deg, #feca57, #ff9f1a);
+      color: #2d3436;
+    }
+
+    &.badge-scifi {
+      background: linear-gradient(135deg, #00d2d3, #01a3a4);
+      color: $white;
+    }
+
+    &.badge-fantasy {
+      background: linear-gradient(135deg, #7d5fff, #5f27cd);
+      color: $white;
+    }
+
+    &.badge-secondary {
+      background: linear-gradient(135deg, #a4b0be, #747d8c);
+      color: $white;
+    }
+  }
+}
+
+// Favorite Button
+.favorite-btn-container {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 3;
+}
+
+.btn-favorite {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba($white, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+
+  i {
+    font-size: 1.1rem;
+    color: $secondary;
+    transition: all 0.2s ease;
+  }
+
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    background-color: $white;
+
+    i {
+      color: $danger;
+    }
+  }
+
+  &.favorited {
+    background-color: $white;
+
+    i {
+      color: $danger;
+      animation: heartbeat 1.5s infinite;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.favorite-loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: $primary;
+  animation: spin 0.8s linear infinite;
+}
+
+// Book Details
+.book-details {
+  padding: 15px;
+  height: 180px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $light;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $secondary;
+    border-radius: 10px;
+  }
+}
+
+.book-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: $dark;
+  transition: color 0.3s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.book-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+
+  .author, .owner {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: $secondary;
+
+    i {
+      margin-right: 5px;
+      font-size: 0.8rem;
+      width: 16px;
+      text-align: center;
+    }
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.book-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .rating-value {
+    margin-left: 7px;
+    font-weight: 600;
+    color: $primary;
+  }
+}
+
+.synopsis {
+  font-size: 0.85rem;
+  color: $secondary;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-height: 1.5;
+}
+
+// Actions Bar
+.book-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 15px;
+  background-color: rgba($light, 0.95);
+  backdrop-filter: blur(5px);
+  border-top: 1px solid rgba($black, 0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+
+  &.admin {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border: none;
+  background-color: rgba($dark, 0.05);
+  color: $secondary;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  &.info:hover {
+    background-color: $info;
+    color: $white;
+  }
+
+  &.primary:hover {
+    background-color: $primary;
+    color: $white;
+  }
+
+  &.success:hover {
+    background-color: $success;
+    color: $white;
+  }
+
+  &.warning:hover {
+    background-color: $warning;
+    color: $white;
+  }
+
+  &.danger:hover {
+    background-color: $danger;
+    color: $white;
+  }
+}
+
+// Loading Overlay
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($white, 0.8);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid transparent;
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+// Error Message
+.error-message {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  z-index: 10;
+  animation: fadeInDown 0.4s ease-out;
+}
+
+.error-content {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: rgba($danger, 0.95);
+  color: $white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba($danger, 0.3);
+
+  i {
+    font-size: 1.1rem;
+    margin-right: 8px;
+  }
+
+  p {
+    flex: 1;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: $white;
+    opacity: 0.8;
+    transition: all 0.2s;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+}
+
+// Animations
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

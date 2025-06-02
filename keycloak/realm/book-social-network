@@ -2,7 +2,7 @@
   "id" : "7160a6c9-53dc-46c6-8a35-f1e65abe3772",
   "realm" : "book-social-network",
   "displayName" : "Book Social Network",
-  "displayNameHtml" : "${realm.name}",
+  "displayNameHtml" : "Book Social Network",
   "notBefore" : 0,
   "defaultSignatureAlgorithm" : "RS256",
   "revokeRefreshToken" : false,
@@ -1316,19 +1316,14 @@
     "xXSSProtection" : "1; mode=block",
     "strictTransportSecurity" : "max-age=31536000; includeSubDomains"
   },
-  "smtpServer" : {
-    "replyToDisplayName" : "",
-    "starttls" : "true",
-    "auth" : "true",
-    "envelopeFrom" : "",
-    "ssl" : "true",
-    "password" : "use_your_own_password",
-    "port" : "465",
-    "replyTo" : "",
-    "host" : "smtp.gmail.com",
-    "from" : "someone@mail.com",
-    "fromDisplayName" : "Alibou",
-    "user" : "your_user@gmail.com"
+  "smtpServer": {
+    "host": "mail-dev",
+    "port": "1025",
+    "from": "noreply@book-social-network.dev",
+    "fromDisplayName": "Book Social Network",
+    "auth": "false",
+    "ssl": "false",
+    "starttls": "false"
   },
   "loginTheme" : "keycloak",
   "accountTheme" : "keycloak.v3",

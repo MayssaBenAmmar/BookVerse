@@ -214,66 +214,6 @@
         }
       }
     },
-    "/auth/register": {
-      "post": {
-        "tags": [
-          "Authentication"
-        ],
-        "operationId": "register",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/authenticate": {
-      "post": {
-        "tags": [
-          "Authentication"
-        ],
-        "operationId": "authenticate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticationRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthenticationResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/books/shareable/{book-id}": {
       "patch": {
         "tags": [
@@ -484,6 +424,36 @@
         }
       }
     },
+    "/books/search": {
+      "get": {
+        "tags": [
+          "Book"
+        ],
+        "operationId": "searchBooks",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseBookResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/books/returned": {
       "get": {
         "tags": [
@@ -610,25 +580,44 @@
         }
       }
     },
-    "/auth/activate-account": {
+    "/books/archived": {
       "get": {
         "tags": [
-          "Authentication"
+          "Book"
         ],
-        "operationId": "confirm",
+        "operationId": "findAllArchivedBooks",
         "parameters": [
           {
-            "name": "token",
+            "name": "page",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseBookResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -685,56 +674,6 @@
           },
           "shareable": {
             "type": "boolean"
-          }
-        }
-      },
-      "RegistrationRequest": {
-        "required": [
-          "email",
-          "firstname",
-          "lastname",
-          "password"
-        ],
-        "type": "object",
-        "properties": {
-          "firstname": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "maxLength": 2147483647,
-            "minLength": 8,
-            "type": "string"
-          }
-        }
-      },
-      "AuthenticationRequest": {
-        "required": [
-          "email",
-          "password"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "maxLength": 2147483647,
-            "minLength": 8,
-            "type": "string"
-          }
-        }
-      },
-      "AuthenticationResponse": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string"
           }
         }
       },
@@ -924,11 +863,17 @@
     },
     "securitySchemes": {
       "bearerAuth": {
-        "type": "http",
+        "type": "oauth2",
         "description": "JWT auth description",
         "in": "header",
         "scheme": "bearer",
-        "bearerFormat": "JWT"
+        "bearerFormat": "JWT",
+        "flows": {
+          "clientCredentials": {
+            "authorizationUrl": "http://localhost:9090/realms/book-social-network/protocol/openid-connect/auth",
+            "scopes": {}
+          }
+        }
       }
     }
   }

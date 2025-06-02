@@ -1,158 +1,222 @@
-<h2>My borrowed books</h2>
-<hr>
-<div class="d-flex flex-column col-6" *ngIf="selectedBook">
-  <h2>Return and share feedback</h2>
-  <div class="d-flex flex-column col-12">
-    <div class="d-flex">
-      <div class="col-1">
-        <strong>Title</strong>
-      </div>
-      <div class="col-11">
-        {{ selectedBook.title }}
-      </div>
+<!-- Updated borrowed-book-list.component.html with date tracking -->
+<div class="library-container">
+  <div class="book-header">
+    <h2 class="section-title">My Borrowed Books</h2>
+    <div class="book-divider">
+      <span class="divider-line"></span>
+      <i class="fas fa-book-open divider-icon"></i>
+      <span class="divider-line"></span>
     </div>
-    <div class="d-flex">
-      <div class="col-1">
-        <strong>Author</strong>
-      </div>
-      <div class="col-11">
-        {{ selectedBook.authorName }}
-      </div>
+  </div>
+
+  <!-- Show error message if any -->
+  <div *ngIf="feedbackError" class="alert alert-danger" role="alert">
+    {{ feedbackError }}
+  </div>
+
+  <!-- Return & Feedback Form -->
+  <div class="return-book-section" *ngIf="selectedBook">
+    <div class="return-header">
+      <h3 class="return-title">Return and Share Feedback</h3>
     </div>
-    <div class="d-flex">
-      <div class="col-1">
-        <strong>ISBN</strong>
+
+    <div class="book-details-card">
+      <div class="book-detail-item">
+        <div class="detail-label">Title</div>
+        <div class="detail-value">{{ selectedBook?.title }}</div>
       </div>
-      <div class="col-11">
-        {{ selectedBook.isbn }}
+
+      <div class="book-detail-item">
+        <div class="detail-label">Author</div>
+        <div class="detail-value">{{ selectedBook?.authorName }}</div>
       </div>
-    </div>
-    <div class="d-flex">
-      <div class="col-1">
-        <strong>Rate</strong>
+
+      <div class="book-detail-item">
+        <div class="detail-label">ISBN</div>
+        <div class="detail-value">{{ selectedBook?.isbn }}</div>
       </div>
-      <div class="col-11">
-        {{ selectedBook.rate }}
+
+      <div class="book-detail-item">
+        <div class="detail-label">Rate</div>
+        <div class="detail-value">{{ selectedBook?.rate }}</div>
       </div>
     </div>
 
-  </div>
-  <hr>
-  <div class="col-12">
-    <form class="row g-3">
-      <div class="d-flex gap-3">
-        <input [(ngModel)]="feedbackRequest.note" type="range" id="rate" name="rate" class="form-range w-25" min="0" max="5" step="0.5">
-        <app-rating [rating]="feedbackRequest.note || 0"></app-rating>
-        {{ feedbackRequest.note }}
-      </div>
-      <div class="col-12">
-        <label for="synopsis" class="form-label">Feedback</label>
-        <textarea [(ngModel)]="feedbackRequest.comment" rows="4" class="form-control" id="synopsis" name="synopsis"
-                  placeholder="Feedback"></textarea>
-      </div>
-      <div class="d-flex justify-content-end gap-2 col-12">
-        <button (click)="returnBook(true)" type="submit" class="btn btn-outline-primary">
-          <i class="fas fa-save"></i>&nbsp;Rate the book & Return
-        </button>
-        <button (click)="returnBook(false)" type="submit" class="btn btn-outline-success">
-          <i class="fa-solid fa-paper-plane"></i>&nbsp;Just Return
-        </button>
-        <a routerLink="/books/my-books" type="submit" class="btn btn-link btn text-danger">
-          <i class="fas fa-times"></i>&nbsp;Cancel
-        </a>
-      </div>
-    </form>
-  </div>
-</div>
-<div *ngIf="!selectedBook">
-  <table class="table">
-    <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Title</th>
-      <th scope="col">Author</th>
-      <th scope="col">ISBN</th>
-      <th scope="col">Rate</th>
-      <th scope="col"><i class="fas fa-cogs"></i></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr
-      *ngFor="let book of borrowedBooks.content; let index = index">
-      <th scope="row">{{ index + 1 }}</th>
-      <td>{{ book.title }}</td>
-      <td>{{ book.authorName }}</td>
-      <td>{{ book.isbn }}</td>
-      <td><i class="fas fa-star text-warning"></i> {{ book.rate }}</td>
-      <td>
-        <div class="d-flex gap-2">
-          <i *ngIf="book.returned" class="fa-regular fa-paper-plane text-primary"></i>
-          <i *ngIf="!book.returned" (click)="returnBorrowedBook(book)" class="fa-solid fa-paper-plane text-success"></i>
-          <i class="fa-solid fa-circle-check" [class.text-success]="book.returnApproved"></i>
+    <div class="feedback-form">
+      <div class="feedback-fields">
+        <div class="rating-field">
+          <label for="rate" class="rating-label">Your Rating</label>
+          <div class="rating-controls">
+            <input [(ngModel)]="feedbackRequest.note" type="range" id="rate" name="rate" class="rating-slider" min="1" max="5" step="0.5">
+            <div class="rating-display">
+              <app-rating [rating]="feedbackRequest.note || 0"></app-rating>
+              <span class="rating-value">{{ feedbackRequest.note }}</span>
+            </div>
+          </div>
         </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-  <div class="d-flex justify-content-center mt-3">
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item">
-          <a
-            (click)="goToFirstPage()"
-            class="page-link"
-            href="javascript:void(0)"
-            aria-label="Previous"
-            [class.disabled]="page === 0"
-          >
-            <i class="fa-solid fa-angles-left"></i>
-          </a>
-        </li>
-        <li class="page-item">
-          <a
-            (click)="goToPreviousPage()"
-            class="page-link"
-            href="javascript:void(0)"
-            aria-label="Previous"
-            [class.disabled]="page === 0"
-          >
-            <i class="fa-solid fa-angle-left"></i>
-          </a>
-        </li>
-        <li
-          class="page-item"
-          *ngFor="let pageIndex of pages"
+
+        <div class="comment-field">
+          <label for="feedback-comment" class="comment-label">Your Feedback</label>
+          <textarea [(ngModel)]="feedbackRequest.comment" rows="4" class="comment-textarea" id="feedback-comment" name="feedback-comment" placeholder="Share your thoughts about this book..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button (click)="returnBook(true)" type="button" class="library-btn primary-btn" [disabled]="isSubmittingFeedback">
+            <i class="fas fa-star"></i>
+            <span>{{ isSubmittingFeedback ? 'Processing...' : 'Rate & Return' }}</span>
+          </button>
+
+          <button (click)="returnBook(false)" type="button" class="library-btn secondary-btn" [disabled]="isSubmittingFeedback">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>{{ isSubmittingFeedback ? 'Processing...' : 'Just Return' }}</span>
+          </button>
+
+          <button (click)="cancelFeedback()" type="button" class="library-btn cancel-btn" [disabled]="isSubmittingFeedback">
+            <i class="fas fa-times"></i>
+            <span>Cancel</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Borrowed Books Table -->
+  <div class="borrowed-books-table" *ngIf="!selectedBook">
+    <div class="table-container">
+      <table class="books-table">
+        <thead>
+        <tr>
+          <th class="index-column">#</th>
+          <th class="title-column">Title</th>
+          <th class="author-column">Author</th>
+          <th class="isbn-column">ISBN</th>
+          <th class="rating-column">Rating</th>
+          <!-- NEW: Added date columns -->
+          <th class="date-column">Borrowed Date</th>
+          <th class="date-column">Days</th>
+          <th class="date-column">Returned Date</th>
+          <th class="actions-column"><i class="fas fa-cogs"></i></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let book of borrowedBooks.content; let index = index" class="book-row">
+          <td class="index-column">{{ index + 1 }}</td>
+          <td class="title-column">{{ book.title }}</td>
+          <td class="author-column">{{ book.authorName }}</td>
+          <td class="isbn-column">{{ book.isbn }}</td>
+          <td class="rating-column">
+            <div class="rating-display">
+              <i class="fas fa-star"></i>
+              <span>{{ book.rate }}</span>
+            </div>
+          </td>
+          <!-- NEW: Date columns -->
+          <td class="date-column">
+            <div class="date-info">
+              <i class="fas fa-calendar-alt"></i>
+              <span>{{ formatDate(book.borrowedDate) }}</span>
+            </div>
+          </td>
+          <td class="date-column">
+            <div class="days-info">
+              <i class="fas fa-clock"></i>
+              <span class="days-count">{{ getDaysBorrowed(book.borrowedDate, book.returnedDate) }}</span>
+              <small>days</small>
+            </div>
+          </td>
+          <td class="date-column">
+            <div class="date-info" *ngIf="book.returned; else notReturned">
+              <i class="fas fa-calendar-check"></i>
+              <span>{{ formatDate(book.returnedDate) }}</span>
+            </div>
+            <ng-template #notReturned>
+              <span class="not-returned">Not returned</span>
+            </ng-template>
+          </td>
+          <td class="actions-column">
+            <div class="book-actions">
+              <i *ngIf="book.returned" class="fa-regular fa-paper-plane returned-icon" title="Already returned"></i>
+              <i *ngIf="!book.returned" (click)="returnBorrowedBook(book)" class="fa-solid fa-paper-plane return-icon" title="Return this book"></i>
+              <i class="fa-solid fa-circle-check approval-icon" [class.approved]="book.returnApproved" title="Return approval status"></i>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty state for no borrowed books -->
+      <div *ngIf="!borrowedBooks.content?.length" class="empty-table">
+        <div class="empty-bookend">
+          <i class="fas fa-book-reader"></i>
+        </div>
+        <div class="empty-message">
+          <h3>No borrowed books</h3>
+          <p>You haven't borrowed any books yet. Explore the library and borrow some books!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="library-pagination" *ngIf="(borrowedBooks?.totalPages || 0) > 1">
+      <div class="pagination-controls">
+        <button
+          class="page-btn first-page"
+          [disabled]="page === 0"
+          (click)="goToFirstPage()"
+          [class.disabled]="page === 0"
+          aria-label="First page"
         >
-          <a
+          <i class="fas fa-angles-left"></i>
+        </button>
+
+        <button
+          class="page-btn prev-page"
+          [disabled]="page === 0"
+          (click)="goToPreviousPage()"
+          [class.disabled]="page === 0"
+          aria-label="Previous page"
+        >
+          <i class="fas fa-angle-left"></i>
+        </button>
+
+        <div class="page-numbers">
+          <button
+            *ngFor="let pageIndex of pages"
             (click)="gotToPage(pageIndex)"
-            class="page-link"
+            class="page-number"
             [class.active]="page === pageIndex"
-            href="javascript:void(0)"
-          >{{ pageIndex + 1 }}</a>
-        </li>
-        <li class="page-item">
-          <a
-            (click)="goToNextPage()"
-            class="page-link"
-            href="javascript:void(0)"
-            aria-label="Next"
-            [class.disabled]="isLastPage"
           >
-            <i class="fa-solid fa-chevron-right"></i>
-          </a>
-        </li>
-        <li class="page-item">
-          <a
-            (click)="goToLastPage()"
-            class="page-link"
-            href="javascript:void(0)"
-            aria-label="Next"
-            [class.disabled]="isLastPage"
-          >
-            <i class="fa-solid fa-angles-right"></i>
-          </a>
-        </li>
-      </ul>
-    </nav>
+            {{ pageIndex + 1 }}
+          </button>
+        </div>
+
+        <button
+          class="page-btn next-page"
+          [disabled]="isLastPage"
+          (click)="goToNextPage()"
+          [class.disabled]="isLastPage"
+          aria-label="Next page"
+        >
+          <i class="fas fa-angle-right"></i>
+        </button>
+
+        <button
+          class="page-btn last-page"
+          [disabled]="isLastPage"
+          (click)="goToLastPage()"
+          [class.disabled]="isLastPage"
+          aria-label="Last page"
+        >
+          <i class="fas fa-angles-right"></i>
+        </button>
+      </div>
+
+      <div class="page-indicator">
+        <span class="bookmark">
+          <i class="fas fa-bookmark"></i>
+          <span class="bookmark-text">Page {{ page + 1 }} of {{ borrowedBooks?.totalPages || 1 }}</span>
+        </span>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,0 +1,143 @@
+<!-- Template moderne avec cartes -->
+<div class="profile-container" *ngIf="!loading && !errorMessage">
+
+  <!-- Barre bleue à gauche -->
+  <div class="profile-sidebar"></div>
+
+  <!-- Contenu principal -->
+  <div class="profile-main">
+
+    <!-- Header avec titre et bouton retour -->
+    <div class="profile-header">
+      <h1>{{ displayName }}'s Profile</h1>
+      <button class="back-button" (click)="goBack()">
+        ← Return to Library
+      </button>
+    </div>
+
+    <!-- Zone de contenu avec cartes -->
+    <div class="profile-content">
+
+      <!-- Carte principale du profil -->
+      <div class="profile-card">
+
+        <!-- Section image et info de base -->
+        <div class="profile-main-info">
+
+          <!-- Image de profil -->
+          <div class="profile-avatar">
+            <img [src]="profileImageSrc"
+                 alt="Profile picture"
+                 class="avatar-image"
+                 (error)="onImageError($event)">
+
+            <input type="file"
+                   id="profile-image-upload"
+                   accept="image/*"
+                   (change)="onProfileImageSelected($event)"
+                   style="display: none;"
+                   *ngIf="isCurrentUser">
+
+            <button *ngIf="isCurrentUser"
+                    (click)="triggerFileInput()"
+                    class="avatar-change-btn">
+              <i class="icon">📷</i>
+            </button>
+          </div>
+
+          <!-- Informations de base -->
+          <div class="profile-basic-info">
+            <h2 class="profile-name">{{ formattedFullName }}</h2>
+            <p class="profile-username">@{{ formattedUsername }}</p>
+            <p class="profile-email">{{ formattedEmail }}</p>
+
+            <div class="profile-stats">
+              <div class="stat-item">
+                <span class="stat-number">{{ realUserProfile?.booksCount || 0 }}</span>
+                <span class="stat-label">Books</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="profile-actions" *ngIf="isCurrentUser">
+          <button (click)="editProfile()" class="edit-button">
+            <i class="icon">✏️</i>
+            Edit Profile
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Carte des détails -->
+      <div class="details-card">
+        <h3 class="card-title">Profile Details</h3>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Username</label>
+            <div class="detail-value">{{ formattedUsername }}</div>
+          </div>
+
+          <div class="detail-item">
+            <label>Full Name</label>
+            <div class="detail-value">{{ formattedFullName }}</div>
+          </div>
+
+          <div class="detail-item">
+            <label>Email Address</label>
+            <div class="detail-value">{{ formattedEmail }}</div>
+          </div>
+
+          <div class="detail-item">
+            <label>Member Since</label>
+            <div class="detail-value">{{ getCurrentDate() }}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Section des livres -->
+    <div class="books-section">
+      <div class="books-card">
+        <div class="books-header">
+          <div class="books-icon">📚</div>
+          <h3>{{ displayName }}'s Library</h3>
+          <span class="books-count">{{ realUserProfile?.booksCount || 0 }} books</span>
+        </div>
+
+        <div class="books-content">
+          <div class="books-placeholder">
+            <div class="placeholder-icon">📖</div>
+            <h4>Books Coming Soon</h4>
+            <p>The book library feature will be available in a future update.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <p>Loading profile...</p>
+  </div>
+</div>
+
+<!-- Error state -->
+<div class="error-container" *ngIf="errorMessage">
+  <div class="error-card">
+    <div class="error-icon">⚠️</div>
+    <h3>Oops! Something went wrong</h3>
+    <p>{{ errorMessage }}</p>
+    <button (click)="goBack()" class="retry-button">
+      ← Go Back
+    </button>
+  </div>
+</div>

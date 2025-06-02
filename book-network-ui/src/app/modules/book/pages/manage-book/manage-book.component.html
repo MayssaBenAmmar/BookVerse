@@ -33,6 +33,18 @@
           <label for="isbn" class="form-label">ISBN</label>
           <input [(ngModel)]="bookRequest.isbn" type="text" class="form-control" id="isbn" name="isbn">
         </div>
+        <!-- Add genre dropdown -->
+        <div class="col-md-6">
+          <label for="genre" class="form-label">Genre</label>
+          <select [(ngModel)]="bookRequest.genre" class="form-select" id="genre" name="genre">
+            <option value="" disabled selected>Select a genre</option>
+            <option value="ROMANCE">Romance</option>
+            <option value="HORROR">Horror</option>
+            <option value="COMEDY">Comedy</option>
+            <option value="SCIFI">Science Fiction</option>
+            <option value="FANTASY">Fantasy</option>
+          </select>
+        </div>
         <div class="col-12">
           <label for="synopsis" class="form-label">Synopsis</label>
           <textarea [(ngModel)]="bookRequest.synopsis" rows="4" class="form-control" id="synopsis" name="synopsis"

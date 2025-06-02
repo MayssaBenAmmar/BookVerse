@@ -1,25 +1,28 @@
 services:
   postgres:
     container_name: postgres-sql-bsn
-    image: postgres
+    image: 'pgvector/pgvector:pg16'
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
-      PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: book_social_network
     volumes:
-      - postgres:/data/postgres
+      - postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
       - spring-demo
     restart: unless-stopped
+
   mail-dev:
     container_name: mail-dev-bsn
     image: maildev/maildev
     ports:
       - 1080:1080
       - 1025:1025
+    networks:
+      - spring-demo
+
   keycloak:
     container_name: keycloak-bsn
     image: quay.io/keycloak/keycloak:24.0.2
@@ -28,10 +31,25 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - keycloak:/opt/keycloak/data
     networks:
       - spring-demo
     command:
       - "start-dev"
+    restart: unless-stopped
+
+  recommender:
+    container_name: lightfm-api
+    build:
+      context: ./lightfm-api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - spring-demo
+    restart: unless-stopped
+
 networks:
   spring-demo:
     driver: bridge

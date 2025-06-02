@@ -2,26 +2,24 @@ package com.alibou.book.book;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class BookResponse {
-
-    private Integer id;
+    private Long id;
     private String title;
     private String authorName;
     private String isbn;
     private String synopsis;
-    private String owner;
-    private byte[] cover;
-    private double rate;
-    private boolean archived;
-    private boolean shareable;
-
+    private String cover;
+    private Boolean archived;
+    private Boolean shareable;
+    private Double rate;
+    private String owner;  // This is the username string
+    private Long ownerId;  // Added field for owner's ID
+    private Genre genre;   // Added genre field
 }

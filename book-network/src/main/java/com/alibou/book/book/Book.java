@@ -3,9 +3,8 @@ package com.alibou.book.book;
 import com.alibou.book.common.BaseEntity;
 import com.alibou.book.feedback.Feedback;
 import com.alibou.book.history.BookTransactionHistory;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
+import com.alibou.book.user.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,10 +28,12 @@ public class Book extends BaseEntity {
     private String bookCover;
     private boolean archived;
     private boolean shareable;
-    // @ManyToOne
-    // @JoinColumn(name = "owner_id")
-    // private User owner;
-    @OneToMany(mappedBy = "book")
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
     private List<Feedback> feedbacks;
     @OneToMany(mappedBy = "book")
     private List<BookTransactionHistory> histories;

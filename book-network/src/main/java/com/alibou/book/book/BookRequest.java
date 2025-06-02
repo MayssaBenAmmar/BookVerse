@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record BookRequest(
-        Integer id,
+        Long id,
         @NotNull(message = "100")
         @NotEmpty(message = "100")
         String title,
@@ -17,6 +17,8 @@ public record BookRequest(
         @NotNull(message = "103")
         @NotEmpty(message = "103")
         String synopsis,
-        boolean shareable
+        boolean shareable,
+        @NotNull(message = "104")
+        Genre genre       // Added genre field with validation
 ) {
 }

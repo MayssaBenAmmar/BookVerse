@@ -23,7 +23,7 @@ public class FeedbackController {
     private final FeedbackService service;
 
     @PostMapping
-    public ResponseEntity<Integer> saveFeedback(
+    public ResponseEntity<Long> saveFeedback(
             @Valid @RequestBody FeedbackRequest request,
             Authentication connectedUser
     ) {
@@ -32,7 +32,7 @@ public class FeedbackController {
 
     @GetMapping("/book/{book-id}")
     public ResponseEntity<PageResponse<FeedbackResponse>> findAllFeedbacksByBook(
-            @PathVariable("book-id") Integer bookId,
+            @PathVariable("book-id") Long bookId,
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
             Authentication connectedUser

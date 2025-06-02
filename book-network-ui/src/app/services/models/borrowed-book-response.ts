@@ -8,4 +8,7 @@ export interface BorrowedBookResponse {
   returnApproved?: boolean;
   returned?: boolean;
   title?: string;
+  // NEW: Added date fields for tracking
+  borrowedDate?: string;
+  returnedDate?: string;
 }

@@ -7,4 +7,5 @@ export interface BookRequest {
   shareable?: boolean;
   synopsis: string;
   title: string;
+  genre?: string; // Add genre field
 }

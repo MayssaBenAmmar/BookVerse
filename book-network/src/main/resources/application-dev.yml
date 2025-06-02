@@ -3,7 +3,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/book_social_network
     username: username
     password: password
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -33,9 +32,24 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: "http://localhost:9090/realms/book-social-network"
+  ai:
+    vectorstore:
+      pgvector:
+        dimensions: 768
+        distance-type: cosine_distance
+        index-type: hnsw
+        initialize-schema: true
+    ollama:
+      embedding:
+        model: nomic-embed-text
 application:
   file:
     uploads:
       photos-output-path: ./uploads
 server:
   port: 8088
+
+# Recommendation service configuration
+recommendation:
+  service:
+    url: http://localhost:5000

@@ -16,6 +16,7 @@ export class ReturnedBooksComponent implements OnInit {
   returnedBooks: PageResponseBorrowedBookResponse = {};
   message = '';
   level: 'success' |'error' = 'success';
+
   constructor(
     private bookService: BookService
   ) {
@@ -23,6 +24,38 @@ export class ReturnedBooksComponent implements OnInit {
 
   ngOnInit(): void {
     this.findAllReturnedBooks();
+  }
+
+  // NEW: Utility method to format dates
+  formatDate(dateString: string | undefined): string {
+    if (!dateString) return 'N/A';
+
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  }
+
+  // NEW: Utility method to calculate days borrowed (from borrowed to returned)
+  getDaysBorrowed(borrowedDate: string | undefined, returnedDate: string | undefined): number {
+    if (!borrowedDate || !returnedDate) return 0;
+
+    const borrowed = new Date(borrowedDate);
+    const returned = new Date(returnedDate);
+    const timeDiff = returned.getTime() - borrowed.getTime();
+    return Math.ceil(timeDiff / (1000 * 3600 * 24));
+  }
+
+  // NEW: Utility method to calculate days since returned
+  getDaysSinceReturned(returnedDate: string | undefined): number {
+    if (!returnedDate) return 0;
+
+    const returned = new Date(returnedDate);
+    const now = new Date();
+    const timeDiff = now.getTime() - returned.getTime();
+    return Math.ceil(timeDiff / (1000 * 3600 * 24));
   }
 
   private findAllReturnedBooks() {

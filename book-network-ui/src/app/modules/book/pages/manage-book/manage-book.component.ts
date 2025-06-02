@@ -15,7 +15,8 @@ export class ManageBookComponent implements OnInit {
     authorName: '',
     isbn: '',
     synopsis: '',
-    title: ''
+    title: '',
+    genre: '' // Added genre field with default empty value
   };
   selectedBookCover: any;
   selectedPicture: string | undefined;
@@ -34,15 +35,16 @@ export class ManageBookComponent implements OnInit {
         'book-id': bookId
       }).subscribe({
         next: (book) => {
-         this.bookRequest = {
-           id: book.id,
-           title: book.title as string,
-           authorName: book.authorName as string,
-           isbn: book.isbn as string,
-           synopsis: book.synopsis as string,
-           shareable: book.shareable
-         };
-         this.selectedPicture='data:image/jpg;base64,' + book.cover;
+          this.bookRequest = {
+            id: book.id,
+            title: book.title as string,
+            authorName: book.authorName as string,
+            isbn: book.isbn as string,
+            synopsis: book.synopsis as string,
+            shareable: book.shareable,
+            genre: book.genre // Include genre when editing existing book
+          };
+          this.selectedPicture='data:image/jpg;base64,' + book.cover;
         }
       });
     }
@@ -53,20 +55,37 @@ export class ManageBookComponent implements OnInit {
       body: this.bookRequest
     }).subscribe({
       next: (bookId) => {
-        this.bookService.uploadBookCoverPicture({
-          'book-id': bookId,
-          body: {
-            file: this.selectedBookCover
-          }
-        }).subscribe({
-          next: () => {
-            this.router.navigate(['/books/my-books']);
-          }
-        });
+        // Check if we have a cover image to upload
+        if (this.selectedBookCover) {
+          this.bookService.uploadBookCoverPicture({
+            'book-id': bookId,
+            body: {
+              file: this.selectedBookCover
+            }
+          }).subscribe({
+            next: () => {
+              this.router.navigate(['/books/my-books']);
+            },
+            error: (err) => {
+              console.error('Error uploading book cover:', err);
+              // Navigate anyway as the book is already saved
+              this.router.navigate(['/books/my-books']);
+            }
+          });
+        } else {
+          // No cover to upload, navigate immediately
+          this.router.navigate(['/books/my-books']);
+        }
       },
       error: (err) => {
         console.log(err.error);
-        this.errorMsg = err.error.validationErrors;
+        if (err.error && err.error.validationErrors) {
+          this.errorMsg = err.error.validationErrors;
+        } else if (err.error && err.error.message) {
+          this.errorMsg = [err.error.message];
+        } else {
+          this.errorMsg = ['An unknown error occurred while saving the book.'];
+        }
       }
     });
   }
@@ -76,7 +95,6 @@ export class ManageBookComponent implements OnInit {
     console.log(this.selectedBookCover);
 
     if (this.selectedBookCover) {
-
       const reader = new FileReader();
       reader.onload = () => {
         this.selectedPicture = reader.result as string;

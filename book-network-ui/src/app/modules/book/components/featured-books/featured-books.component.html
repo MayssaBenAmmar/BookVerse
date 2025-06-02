@@ -1,0 +1,145 @@
+<div class="featured-container">
+  <!-- Header Section -->
+  <div class="featured-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-robot ai-icon"></i>
+        AI Book Recommendations
+      </h1>
+      <p class="page-subtitle">Discover your next favorite book with intelligent recommendations</p>
+
+      <!-- AI Status Indicator -->
+      <div class="ai-status-card" [class.online]="aiServiceOnline">
+        <div class="status-indicator">
+          <i class="fas" [ngClass]="aiServiceOnline ? 'fa-check-circle' : 'fa-exclamation-triangle'"></i>
+          <span>AI Engine {{ aiServiceOnline ? 'Online' : 'Offline' }}</span>
+        </div>
+        <button class="refresh-btn" (click)="refreshRecommendations()" [disabled]="isLoading">
+          <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-section">
+    <div class="loading-spinner">
+      <i class="fas fa-robot fa-spin"></i>
+      <p>AI is analyzing your preferences...</p>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-alert">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ errorMessage }}</span>
+    <button (click)="errorMessage = null" class="close-error">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Content Sections -->
+  <div class="recommendations-content" *ngIf="!isLoading">
+    <!-- Trending Books -->
+    <section class="recommendation-section" *ngIf="trendingBooks.length > 0">
+      <div class="section-header">
+        <h2>
+          <i class="fas fa-fire"></i>
+          Personalized For You
+        </h2>
+        <p class="section-subtitle">Based on your reading history and preferences</p>
+      </div>
+
+      <div class="books-scroll-container">
+        <div class="books-horizontal-scroll">
+          <app-book-card
+            *ngFor="let book of trendingBooks"
+            [book]="book"
+            [manage]="false"
+            (share)="onShare($event)"
+            (archive)="onArchive($event)"
+            (addToWaitingList)="onAddToWaitingList($event)"
+            (borrow)="onBorrow($event)"
+            (edit)="onEdit($event)"
+            (details)="onShowDetails($event)"
+            (favoriteChanged)="onFavoriteChanged($event)"
+            (bookDeleted)="onBookDeleted($event)"
+            (viewProfile)="onViewProfile($event)">
+          </app-book-card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Books -->
+    <section class="recommendation-section" *ngIf="featuredBooks.length > 0">
+      <div class="section-header">
+        <h2>
+          <i class="fas fa-star"></i>
+          Featured Books
+        </h2>
+        <p class="section-subtitle">Top-rated books loved by our community</p>
+      </div>
+
+      <div class="books-grid featured">
+        <app-book-card
+          *ngFor="let book of featuredBooks"
+          [book]="book"
+          [manage]="false"
+          (share)="onShare($event)"
+          (archive)="onArchive($event)"
+          (addToWaitingList)="onAddToWaitingList($event)"
+          (borrow)="onBorrow($event)"
+          (edit)="onEdit($event)"
+          (details)="onShowDetails($event)"
+          (favoriteChanged)="onFavoriteChanged($event)"
+          (bookDeleted)="onBookDeleted($event)"
+          (viewProfile)="onViewProfile($event)">
+        </app-book-card>
+      </div>
+    </section>
+
+
+    <!-- Genre Recommendations -->
+    <section class="recommendation-section" *ngFor="let genreRec of genreRecommendations">
+      <div class="section-header">
+        <h2>
+          <i class="fas fa-tags"></i>
+          {{ genreRec.genre }} Books
+        </h2>
+        <p class="section-subtitle">Curated {{ genreRec.genre.toLowerCase() }} recommendations</p>
+      </div>
+
+      <div class="books-scroll-container">
+        <div class="books-horizontal-scroll">
+          <app-book-card
+            *ngFor="let book of genreRec.books"
+            [book]="book"
+            [manage]="false"
+            (share)="onShare($event)"
+            (archive)="onArchive($event)"
+            (addToWaitingList)="onAddToWaitingList($event)"
+            (borrow)="onBorrow($event)"
+            (edit)="onEdit($event)"
+            (details)="onShowDetails($event)"
+            (favoriteChanged)="onFavoriteChanged($event)"
+            (bookDeleted)="onBookDeleted($event)"
+            (viewProfile)="onViewProfile($event)">
+          </app-book-card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty State for Non-Authenticated Users -->
+    <section class="empty-state" *ngIf="!isAuthenticated">
+      <div class="empty-content">
+        <i class="fas fa-user-plus"></i>
+        <h3>Get Personalized Recommendations</h3>
+        <p>Sign in to receive AI-powered book recommendations based on your reading preferences</p>
+        <button class="btn btn-primary" (click)="keycloakService.login()">
+          <i class="fas fa-sign-in-alt"></i>
+          Sign In
+        </button>
+      </div>
+    </section>
+  </div>
+</div>
