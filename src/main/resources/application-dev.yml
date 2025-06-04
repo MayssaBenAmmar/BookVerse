@@ -1,0 +1,64 @@
+spring:
+  datasource:
+    # Updated to use Render PostgreSQL
+    url: jdbc:postgresql://dpg-d1017p63jp1c739h58k0-a.frankfurt-postgres.render.com:5432/bookverse_dsh3?sslmode=require
+    username: bookverse_dsh3_user
+    password: gOCQEuyI0orScN7nm0W9Hz1anpJfwQqK
+  jpa:
+    hibernate:
+      # IMPORTANT: Change to 'validate' since your schema already exists
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    # Keep localhost for now - we'll deploy MailDev next
+    host: localhost
+    port: 1025
+    username: ali
+    password: ali
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Keep localhost for now - we'll deploy Keycloak next
+          issuer-uri: "http://localhost:9090/realms/book-social-network"
+  ai:
+    vectorstore:
+      pgvector:
+        dimensions: 768
+        distance-type: cosine_distance
+        index-type: hnsw
+        # IMPORTANT: Set to false since vector_store table already exists
+        initialize-schema: false
+    ollama:
+      embedding:
+        model: nomic-embed-text
+application:
+  file:
+    uploads:
+      photos-output-path: ./uploads
+server:
+  # Use Render's PORT environment variable, fallback to 8088
+  port: ${PORT:8088}
+  # Bind to all interfaces so Render can access it
+  address: 0.0.0.0
+
+# Recommendation service configuration
+recommendation:
+  service:
+    # Keep localhost for now - we'll deploy this service next
+    url: http://localhost:5000
