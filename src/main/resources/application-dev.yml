@@ -52,7 +52,10 @@ application:
     uploads:
       photos-output-path: ./uploads
 server:
-  port: 8088
+  # Use Render's PORT environment variable, fallback to 8088
+  port: ${PORT:8088}
+  # Bind to all interfaces so Render can access it
+  address: 0.0.0.0
 
 # Recommendation service configuration
 recommendation:
