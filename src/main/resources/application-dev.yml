@@ -1,11 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/book_social_network
-    username: username
-    password: password
+    # Updated to use Render PostgreSQL
+    url: jdbc:postgresql://dpg-d1017p63jp1c739h58k0-a.frankfurt-postgres.render.com:5432/bookverse_dsh3?sslmode=require
+    username: bookverse_dsh3_user
+    password: gOCQEuyI0orScN7nm0W9Hz1anpJfwQqK
   jpa:
     hibernate:
-      ddl-auto: update
+      # IMPORTANT: Change to 'validate' since your schema already exists
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -13,6 +15,7 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
+    # Keep localhost for now - we'll deploy MailDev next
     host: localhost
     port: 1025
     username: ali
@@ -31,6 +34,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
+          # Keep localhost for now - we'll deploy Keycloak next
           issuer-uri: "http://localhost:9090/realms/book-social-network"
   ai:
     vectorstore:
@@ -38,7 +42,8 @@ spring:
         dimensions: 768
         distance-type: cosine_distance
         index-type: hnsw
-        initialize-schema: true
+        # IMPORTANT: Set to false since vector_store table already exists
+        initialize-schema: false
     ollama:
       embedding:
         model: nomic-embed-text
@@ -52,4 +57,5 @@ server:
 # Recommendation service configuration
 recommendation:
   service:
+    # Keep localhost for now - we'll deploy this service next
     url: http://localhost:5000
