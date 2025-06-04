@@ -1,0 +1,100 @@
+<!-- favorites.component.html -->
+<div class="favorites-container">
+  <!-- Title with heart decoration -->
+  <div class="title-container">
+    <h1 class="main-title">My Favorite Books</h1>
+    <div class="title-decoration">
+      <span class="decoration-line"></span>
+      <i class="fas fa-heart decoration-icon"></i>
+      <span class="decoration-line"></span>
+    </div>
+  </div>
+
+  <!-- Controls bar (filter and sort) -->
+  <div class="controls-bar">
+    <div class="controls-left">
+      <button class="control-btn">
+        <i class="fas fa-filter"></i>
+        <span>Filter</span>
+      </button>
+      <button class="control-btn">
+        <i class="fas fa-sort"></i>
+        <span>Sort by</span>
+      </button>
+    </div>
+    <div class="books-count">
+      <i class="fas fa-book"></i>
+      <span>{{ displayedBooks.length || 0 }} favorite {{ displayedBooks.length === 1 ? 'book' : 'books' }}</span>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading your favorite books...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="error-container">
+    <div class="error-content">
+      <h3><i class="fas fa-exclamation-triangle"></i> We encountered a problem!</h3>
+      <p>{{ error }}</p>
+      <button (click)="retryLoading()" class="retry-btn">
+        <i class="fas fa-redo"></i> Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && favorites.length === 0" class="empty-container">
+    <div class="empty-content">
+      <i class="fas fa-heart empty-icon"></i>
+      <h3>No favorite books yet</h3>
+      <p>You haven't added any books to your favorites list yet. Browse our collection to find books you love.</p>
+      <button (click)="browseBooks()" class="browse-btn">
+        <i class="fas fa-book"></i> Browse Books
+      </button>
+    </div>
+  </div>
+
+  <!-- Books grid - properly structured for your book cards -->
+  <div *ngIf="!loading && !error && favorites.length > 0" class="books-grid">
+    <div *ngFor="let book of displayedBooks" class="book-card-wrapper">
+      <app-book-card
+        [book]="book"
+        [manage]="book.owner === keycloakService.username">
+      </app-book-card>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && !error && totalPages > 1" class="pagination-container">
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="goToFirstPage()">
+      <i class="fas fa-angles-left"></i>
+    </button>
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPreviousPage()">
+      <i class="fas fa-angle-left"></i>
+    </button>
+
+    <div class="page-numbers">
+      <button
+        *ngFor="let page of getPageNumbers()"
+        class="page-number"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+    </div>
+
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToNextPage()">
+      <i class="fas fa-angle-right"></i>
+    </button>
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToLastPage()">
+      <i class="fas fa-angles-right"></i>
+    </button>
+  </div>
+
+  <div *ngIf="!loading && !error && totalPages > 1" class="page-indicator">
+    Page {{ currentPage }} of {{ totalPages }}
+  </div>
+</div>

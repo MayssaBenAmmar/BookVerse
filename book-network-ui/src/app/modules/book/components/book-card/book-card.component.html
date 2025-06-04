@@ -1,0 +1,121 @@
+<!-- book-card.component.html -->
+<div class="book-card"
+     [class.shareable]="book.shareable"
+     [class.archived]="book.archived"
+     (click)="onShowDetails()">
+
+  <!-- Status indicator ribbon -->
+  <div class="status-ribbon" *ngIf="book.archived || book.shareable">
+    <span *ngIf="book.archived">Archived</span>
+    <span *ngIf="!book.archived && book.shareable">Available</span>
+  </div>
+
+  <!-- Loading overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error message with animation -->
+  <div *ngIf="errorMessage" class="error-message">
+    <div class="error-content">
+      <i class="fas fa-exclamation-circle"></i>
+      <p>{{ errorMessage }}</p>
+      <button class="close-btn" (click)="errorMessage = null; $event.stopPropagation();">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Book cover with gradient overlay -->
+  <div class="book-cover-container">
+    <img [src]="bookCover" class="book-cover" alt="{{ book.title }}">
+    <div class="cover-overlay"></div>
+
+    <!-- Genre Badge -->
+    <div *ngIf="book.genre" class="genre-badge">
+      <span [ngClass]="getGenreClass(book.genre)">
+        <i [ngClass]="getGenreIcon(book.genre)"></i>
+        {{ formatGenre(book.genre) }}
+      </span>
+    </div>
+
+    <!-- Favorite button -->
+    <div class="favorite-btn-container" *ngIf="!manage" (click)="toggleFavorite(); $event.stopPropagation();">
+      <button class="btn-favorite" [class.favorited]="isFavorited" [class.disabled]="favoriteLoading">
+        <i class="fas" [ngClass]="isFavorited ? 'fa-heart' : 'fa-heart'"></i>
+        <span *ngIf="favoriteLoading" class="favorite-loader"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Book details -->
+  <div class="book-details">
+    <h3 class="book-title" [title]="book.title">{{ book.title }}</h3>
+
+    <div class="book-meta">
+      <div class="author">
+        <i class="fas fa-feather-alt"></i>
+        <span>{{ book.authorName }}</span>
+      </div>
+
+      <div class="owner" *ngIf="book.owner && book.owner !== 'Unknown Owner'">
+        <i class="fas fa-user"></i>
+        <span>{{ formatUsername(book.owner) }}</span>
+      </div>
+    </div>
+
+    <!-- Updated rating section with click handling -->
+    <div class="book-rating" (click)="$event.stopPropagation();">
+      <app-rating
+        [rating]="book.rate || 0"
+        [readonly]="manage"
+        [showRatingValue]="true"
+        (ratingClicked)="onRatingClick($event)">
+      </app-rating>
+    </div>
+
+    <p class="synopsis">{{ book.synopsis }}</p>
+  </div>
+
+  <!-- Card actions -->
+  <div class="book-actions">
+    <!-- Reader actions -->
+    <div class="action-buttons" *ngIf="!manage">
+      <button class="action-btn info" (click)="onShowDetails(); $event.stopPropagation();" title="Details">
+        <i class="fas fa-info-circle"></i>
+      </button>
+
+      <button class="action-btn primary" (click)="onBorrow(); $event.stopPropagation();" title="Borrow">
+        <i class="fas fa-book-reader"></i>
+      </button>
+
+      <button class="action-btn warning"
+              *ngIf="book.owner && book.owner !== 'Unknown Owner'"
+              (click)="onViewProfile(book.owner); $event.stopPropagation();"
+              title="View Profile">
+        <i class="fas fa-user-circle"></i>
+      </button>
+    </div>
+
+    <!-- Admin actions -->
+    <div class="action-buttons admin" *ngIf="manage">
+      <button class="action-btn success" (click)="onEdit(); $event.stopPropagation();" title="Edit">
+        <i class="fas fa-edit"></i>
+      </button>
+
+      <button class="action-btn primary" (click)="onShare(); $event.stopPropagation();" title="Share">
+        <i class="fas fa-share-alt"></i>
+      </button>
+
+      <button class="action-btn warning" (click)="onArchive(); $event.stopPropagation();" title="Archive">
+        <i class="fas fa-archive"></i>
+      </button>
+
+      <button class="action-btn danger" (click)="onDelete($event); $event.stopPropagation();" title="Delete">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>

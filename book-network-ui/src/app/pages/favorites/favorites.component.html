@@ -1,0 +1,159 @@
+<!-- favorites.component.html -->
+<div class="favorites-container">
+  <div class="favorites-header">
+    <div class="header-icon">
+      <i class="fas fa-heart"></i>
+    </div>
+    <div class="header-content">
+      <h1 class="page-title">My Favorite Books</h1>
+      <p class="page-subtitle">Your handpicked collection of treasured reads</p>
+    </div>
+  </div>
+
+  <!-- Message Alerts -->
+  <div *ngIf="message" class="message-alert" [ngClass]="{'error-alert': level === 'error', 'success-alert': level === 'success'}">
+    <i class="fas" [ngClass]="{'fa-exclamation-circle': level === 'error', 'fa-check-circle': level === 'success'}"></i>
+    <p>{{ message }}</p>
+    <button class="close-alert" (click)="message = ''">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Collection Stats -->
+  <div class="collection-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-book"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ favoriteBooks?.length || 0 }}</span>
+        <span class="stat-label">Favorite Books</span>
+      </div>
+    </div>
+    <div class="stat-card" *ngIf="favoriteBooks?.length">
+      <div class="stat-icon">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ getAverageRating() | number:'1.1-1' }}</span>
+        <span class="stat-label">Average Rating</span>
+      </div>
+    </div>
+    <div class="stat-card" *ngIf="getTopGenre()">
+      <div class="stat-icon">
+        <i class="fas fa-bookmark"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ getTopGenre() }}</span>
+        <span class="stat-label">Top Genre</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter & Sort Options -->
+  <div class="action-bar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search your favorites..." [(ngModel)]="searchQuery" (input)="filterBooks()">
+    </div>
+    <div class="action-buttons">
+      <button class="action-btn sort-btn" (click)="toggleSortMenu()">
+        <i class="fas fa-sort"></i>
+        <span>Sort</span>
+        <i class="fas fa-chevron-down" [class.rotated]="showSortMenu"></i>
+      </button>
+
+      <div class="sort-menu" *ngIf="showSortMenu">
+        <button class="sort-option" (click)="sortBooks('title')" [class.active]="sortBy === 'title'">
+          <i class="fas fa-sort-alpha-down"></i>
+          <span>By Title</span>
+        </button>
+        <button class="sort-option" (click)="sortBooks('rating')" [class.active]="sortBy === 'rating'">
+          <i class="fas fa-star"></i>
+          <span>By Rating</span>
+        </button>
+        <button class="sort-option" (click)="sortBooks('date')" [class.active]="sortBy === 'date'">
+          <i class="fas fa-calendar-alt"></i>
+          <span>By Date Added</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Favorites Books Display -->
+  <div class="favorites-grid">
+    <div class="empty-favorites" *ngIf="!favoriteBooks?.length">
+      <div class="empty-heart">
+        <i class="fas fa-heart"></i>
+      </div>
+      <h3>Your favorites collection is empty</h3>
+      <p>Books you mark as favorites will appear here for quick access</p>
+      <button class="browse-btn" routerLink="/books">
+        <i class="fas fa-book-open"></i>
+        <span>Browse Books</span>
+      </button>
+    </div>
+
+    <div class="book-card" *ngFor="let book of displayedBooks">
+      <div class="favorite-badge">
+        <i class="fas fa-heart"></i>
+      </div>
+      <div class="book-cover" [style.background-image]="'url(' + (book.coverUrl || 'assets/images/default-cover.jpg') + ')'">
+        <div class="book-overlay">
+          <button class="overlay-btn details-btn" (click)="viewBookDetails(book)">
+            <i class="fas fa-info-circle"></i>
+          </button>
+          <button class="overlay-btn unfavorite-btn" (click)="removeFromFavorites(book)">
+            <i class="fas fa-heart-broken"></i>
+          </button>
+        </div>
+      </div>
+      <div class="book-details">
+        <h3 class="book-title">{{ book.title }}</h3>
+        <div class="book-author">
+          <i class="fas fa-user-edit"></i>
+          <span>{{ book.author }}</span>
+        </div>
+        <div class="book-rating">
+          <app-rating [rating]="book.rating" [showRatingText]="true"></app-rating>
+        </div>
+        <p class="book-description" *ngIf="book.description">{{ book.description | slice:0:120 }}{{ book.description.length > 120 ? '...' : '' }}</p>
+        <div class="book-genre" *ngIf="book.genre">
+          <span class="genre-tag" [ngClass]="'genre-' + book.genre.toLowerCase()">{{ book.genre }}</span>
+        </div>
+      </div>
+      <div class="book-actions">
+        <button class="book-btn read-btn" *ngIf="book.readUrl" (click)="readBook(book)">
+          <i class="fas fa-book-reader"></i>
+          <span>Read</span>
+        </button>
+        <button class="book-btn share-btn" (click)="shareBook(book)">
+          <i class="fas fa-share-alt"></i>
+          <span>Share</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination if needed -->
+  <div class="pagination-container" *ngIf="totalPages > 1">
+    <div class="page-numbers">
+      <button class="page-control" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <button
+        *ngFor="let page of getPageNumbers()"
+        class="page-number"
+        [class.active]="page === currentPage"
+        (click)="changePage(page)"
+      >
+        {{ page }}
+      </button>
+
+      <button class="page-control" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

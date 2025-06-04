@@ -1,0 +1,307 @@
+// Rich book-themed colors
+$parchment: #F8EFD4;
+$old-paper: #E8DDB5;
+$book-brown: #8c5e34;
+$dark-wood: #5D4037;
+$shelf-wood: #8B4513;
+$leather-red: #712F26;
+$leather-brown: #8B4513;
+$leather-gold: #D4AF37;
+$leather-green: #4caf50;
+$ink-blue: #003366;
+$success-green: #28a745;
+$danger-red: #dc3545;
+$border-radius: 8px;
+
+// Background texture mixin
+@mixin paper-texture {
+  background-color: $parchment;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23b9a577' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.p-2 {
+  @include paper-texture;
+  padding: 30px !important;
+  max-width: 1200px;
+  margin: 20px auto;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to right, $leather-gold, $ink-blue, $leather-gold);
+    border-radius: 10px 10px 0 0;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right,
+      rgba(0,0,0,0.2) 0%,
+      rgba(0,0,0,0.1) 2%,
+      rgba(0,0,0,0.05) 98%,
+      rgba(0,0,0,0.2) 100%
+    );
+  }
+}
+
+h2 {
+  font-family: 'Georgia', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: $dark-wood;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, transparent, $leather-brown, transparent);
+  }
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba($book-brown, 0.5), transparent);
+  margin: 25px 0;
+  opacity: 0.5;
+}
+
+.alert-danger {
+  background-color: rgba($danger-red, 0.1);
+  border: none;
+  border-left: 4px solid $danger-red;
+  border-radius: $border-radius;
+  color: darken($danger-red, 10%);
+  padding: 15px 20px;
+  margin-bottom: 20px;
+
+  p {
+    margin: 5px 0;
+  }
+}
+
+.d-flex.gap-2 {
+  gap: 30px !important;
+}
+
+.col-3 {
+  width: 30%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.col-9 {
+  width: 70%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+img.rounded-1 {
+  border-radius: 8px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  // Book binding effect
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 100%;
+    background: linear-gradient(to right,
+      rgba(0,0,0,0.2),
+      rgba(0,0,0,0.05)
+    );
+    border-radius: 8px 0 0 8px;
+    z-index: 1;
+  }
+}
+
+.form-control, .form-select {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba($book-brown, 0.2);
+  border-radius: $border-radius;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+  color: $dark-wood;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba($book-brown, 0.1);
+    border-color: rgba($book-brown, 0.5);
+    background-color: white;
+  }
+
+  &::placeholder {
+    color: rgba($dark-wood, 0.4);
+  }
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-label {
+  color: $book-brown;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.form-file {
+  margin-top: 15px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+
+  .form-check-input {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba($book-brown, 0.3);
+
+    &:checked {
+      background-color: $leather-brown;
+      border-color: $leather-brown;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($book-brown, 0.1);
+      border-color: $leather-brown;
+    }
+  }
+
+  .form-check-label {
+    color: $dark-wood;
+    font-weight: 500;
+  }
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: $border-radius;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  i {
+    font-size: 14px;
+  }
+
+  &.btn-outline-primary {
+    border: 2px solid $book-brown;
+    color: $book-brown;
+    background: transparent;
+
+    &:hover {
+      background-color: $book-brown;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.btn-link {
+    color: $danger-red;
+    text-decoration: none;
+
+    &:hover {
+      background-color: rgba($danger-red, 0.1);
+      color: darken($danger-red, 10%);
+    }
+  }
+}
+
+// Enhance file input styling
+input[type="file"] {
+  padding: 8px;
+  font-size: 14px;
+
+  &::file-selector-button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba($book-brown, 0.3);
+    background-color: rgba($book-brown, 0.1);
+    color: $book-brown;
+    font-weight: 500;
+    margin-right: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba($book-brown, 0.2);
+    }
+  }
+}
+
+// Media queries for responsive design
+@media (max-width: 768px) {
+  .d-flex.gap-2 {
+    flex-direction: column;
+  }
+
+  .justify-content-end {
+    justify-content: center !important;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  .p-2 {
+    padding: 20px !important;
+  }
+}
+
+// Row and column gap adjustments
+.row.g-3 {
+  row-gap: 20px !important;
+}
+
+// Enhance column widths for smaller screens
+@media (max-width: 576px) {
+  .col-md-6 {
+    width: 100%;
+  }
+}

@@ -1,0 +1,48 @@
+.rating-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  &.interactive {
+    cursor: pointer;
+  }
+}
+
+.star {
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &.filled {
+    color: #f59e0b;
+  }
+
+  &.half-filled {
+    color: #f59e0b;
+  }
+
+  &.empty {
+    color: #d1d5db;
+  }
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+      filter: brightness(1.2);
+    }
+  }
+}
+
+.rating-value {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-left: 4px;
+}

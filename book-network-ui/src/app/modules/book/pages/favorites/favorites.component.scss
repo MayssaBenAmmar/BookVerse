@@ -1,0 +1,466 @@
+// Color Palette to match the archived books page
+$parchment: #F8EFD4;
+$dark-brown: #5D4037;
+$medium-brown: #795548;
+$light-brown: #A1887F;
+$heart-red: #E53935;
+$gold: #D4AF37;
+$text-dark: #3E2723;
+$text-light: #8D6E63;
+$border-color: #D7CCA1;
+$shadow-color: rgba(0, 0, 0, 0.1);
+
+// Parchment texture background
+@mixin parchment-texture {
+  background-color: $parchment;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23d7cca1' fill-opacity='0.1' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+// Main container
+.favorites-container {
+  @include parchment-texture;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 30px;
+  position: relative;
+
+  // Gold border at top
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 8px;
+    background: linear-gradient(to right,
+      transparent,
+      $gold,
+      transparent
+    );
+    border-radius: 4px 4px 0 0;
+  }
+}
+
+// Title styles
+.title-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.main-title {
+  font-family: 'Georgia', serif;
+  font-size: 32px;
+  color: $dark-brown;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.title-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.decoration-line {
+  height: 1px;
+  width: 100px;
+  background: linear-gradient(to right, transparent, $medium-brown, transparent);
+}
+
+.decoration-icon {
+  color: $heart-red;
+  font-size: 24px;
+  margin: 0 15px;
+}
+
+// Controls bar - adjusted to match your screenshot
+.controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-color;
+}
+
+.controls-left {
+  display: flex;
+  gap: 10px;
+}
+
+.control-btn {
+  background-color: transparent;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: $text-dark;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    background-color: rgba($border-color, 0.2);
+  }
+
+  i {
+    color: $text-light;
+  }
+}
+
+.books-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: $text-light;
+
+  i {
+    color: $medium-brown;
+  }
+}
+
+// Books grid - UPDATED to match your screenshot exactly
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Override any app-book-card styles that might be affecting the layout */
+:host ::ng-deep app-book-card {
+  display: block;
+  height: 100%;
+
+  // Card container
+  .card {
+    height: 100%;
+    margin-bottom: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  // Fix any padding issues
+  .card-body {
+    padding: 16px;
+  }
+
+  // Make sure images are properly sized
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  // Ensure text doesn't overflow
+  .card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // Fix rating stars alignment
+  .rating-stars {
+    display: flex;
+    align-items: center;
+  }
+
+  // Fix action buttons at bottom
+  .card-footer {
+    background-color: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+}
+
+// Fix the book card wrappers
+.book-card-wrapper {
+  position: relative;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+
+  // Add the red marker on the left side
+  &:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: $heart-red;
+    z-index: 10;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+// Loading styles
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba($medium-brown, 0.2);
+    border-radius: 50%;
+    border-top-color: $medium-brown;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 15px;
+  }
+
+  p {
+    color: $text-light;
+    font-size: 16px;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Error state
+.error-container {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+}
+
+.error-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-color;
+  max-width: 500px;
+  width: 100%;
+
+  h3 {
+    color: $text-dark;
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: 600;
+
+    i {
+      color: $heart-red;
+      margin-right: 8px;
+    }
+  }
+
+  p {
+    color: $text-light;
+    margin-bottom: 20px;
+  }
+}
+
+.retry-btn {
+  background-color: transparent;
+  border: 1px solid $heart-red;
+  color: $heart-red;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: $heart-red;
+    color: white;
+  }
+}
+
+// Empty state
+.empty-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.empty-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-color;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.empty-icon {
+  font-size: 40px;
+  color: $heart-red;
+  display: inline-block;
+  margin-bottom: 20px;
+  background-color: rgba($heart-red, 0.1);
+  width: 90px;
+  height: 90px;
+  line-height: 90px;
+  border-radius: 50%;
+}
+
+.empty-content h3 {
+  font-size: 22px;
+  color: $text-dark;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.empty-content p {
+  color: $text-light;
+  margin-bottom: 20px;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.browse-btn {
+  background-color: $medium-brown;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: darken($medium-brown, 10%);
+  }
+}
+
+// Pagination
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 30px;
+}
+
+.page-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  cursor: pointer;
+  color: $text-dark;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: rgba($medium-brown, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.page-numbers {
+  display: flex;
+  gap: 6px;
+}
+
+.page-number {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  cursor: pointer;
+  color: $text-dark;
+  transition: all 0.2s ease;
+
+  &:hover:not(.active) {
+    background-color: rgba($medium-brown, 0.1);
+  }
+
+  &.active {
+    background-color: $dark-brown;
+    color: white;
+    border-color: $dark-brown;
+  }
+}
+
+.page-indicator {
+  text-align: center;
+  margin-top: 15px;
+  color: $text-light;
+  font-size: 14px;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .favorites-container {
+    padding: 15px;
+  }
+
+  .main-title {
+    font-size: 28px;
+  }
+
+  .decoration-line {
+    width: 80px;
+  }
+
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .controls-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    .books-count {
+      align-self: flex-end;
+    }
+  }
+
+  .main-title {
+    font-size: 24px;
+  }
+
+  .decoration-line {
+    width: 60px;
+  }
+
+  .books-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-numbers {
+    overflow-x: auto;
+    max-width: 160px;
+    padding-bottom: 5px;
+  }
+}

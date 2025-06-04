@@ -1,0 +1,116 @@
+<div class="book-details-wrapper">
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="book-details-container">
+    <!-- Book Card -->
+    <div class="book-card">
+      <div class="book-image-container">
+        <img class="book-image"
+             [src]="book.cover ? ('data:image/jpg;base64,' + book.cover) : 'https://via.placeholder.com/300x400?text=No+Cover'"
+             [alt]="book.title">
+        <!-- Genre badge -->
+        <div *ngIf="book.genre" class="genre-badge">
+          {{ formatGenre(book.genre) }}
+        </div>
+      </div>
+
+      <div class="book-info">
+        <!-- Book Icon and Title -->
+        <div class="book-title">
+          <i class="fa-solid fa-book"></i> {{ book.title }}
+        </div>
+
+        <!-- Author with user icon -->
+        <div class="book-author">
+          <i class="fa-solid fa-user"></i> {{ book.authorName }}
+        </div>
+
+        <!-- ISBN with code icon -->
+        <div class="book-isbn">
+          <i class="fa-solid fa-code"></i> {{ book.isbn }}
+        </div>
+
+        <!-- Owner -->
+        <div class="book-owner">
+          <i class="fa-solid fa-user"></i> {{ book.owner }}
+        </div>
+
+        <!-- Star Rating -->
+        <div class="book-rating">
+          <app-rating [rating]="book.rate || 0"></app-rating>
+          <span class="rating-number">{{ book.rate || 0 }}</span>
+          <span class="feedback-count">({{ feedbacks?.totalElements || 0 }} feedbacks)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book Synopsis -->
+    <div class="book-synopsis">
+      {{ book.synopsis }}
+    </div>
+
+    <!-- Feedbacks Section -->
+    <div class="feedbacks-section">
+      <div *ngIf="!error && feedbacks && feedbacks.content && feedbacks.content.length > 0" class="feedbacks-list">
+        <div *ngFor="let feedback of feedbacks.content" class="feedback-item">
+          <div class="feedback-rating">
+            <app-rating [rating]="feedback.note || 0"></app-rating>
+            <span class="rating-number">{{ feedback.note }}</span>
+          </div>
+          <p class="feedback-comment">{{ feedback.comment }}</p>
+        </div>
+      </div>
+
+      <!-- No feedbacks message -->
+      <div *ngIf="!error && (!feedbacks || !feedbacks.content || feedbacks.content.length === 0)" class="no-feedbacks">
+        No feedbacks available for this book yet.
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!error && feedbacks && feedbacks.content && feedbacks.content.length > 0 && feedbacks.totalPages && feedbacks.totalPages > 1" class="pagination-container">
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <!-- First page button -->
+          <li class="page-item" [class.disabled]="page === 0">
+            <button class="page-link" (click)="goToFirstPage()" [disabled]="page === 0">
+              <i class="fa-solid fa-angles-left"></i>
+            </button>
+          </li>
+
+          <!-- Previous page button -->
+          <li class="page-item" [class.disabled]="page === 0">
+            <button class="page-link" (click)="goToPreviousPage()" [disabled]="page === 0">
+              <i class="fa-solid fa-angle-left"></i>
+            </button>
+          </li>
+
+          <!-- Page numbers -->
+          <li class="page-item" *ngFor="let pageIndex of pages" [class.active]="page === pageIndex">
+            <button class="page-link" (click)="gotToPage(pageIndex)">
+              {{ pageIndex + 1 }}
+            </button>
+          </li>
+
+          <!-- Next page button -->
+          <li class="page-item" [class.disabled]="isLastPage">
+            <button class="page-link" (click)="goToNextPage()" [disabled]="isLastPage">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </li>
+
+          <!-- Last page button -->
+          <li class="page-item" [class.disabled]="isLastPage">
+            <button class="page-link" (click)="goToLastPage()" [disabled]="isLastPage">
+              <i class="fa-solid fa-angles-right"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

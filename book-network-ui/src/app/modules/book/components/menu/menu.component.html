@@ -1,0 +1,100 @@
+<!-- Final Corrected menu.component.html -->
+<nav class="book-navbar">
+  <div class="navbar-container">
+    <!-- Logo Section -->
+    <div class="navbar-brand">
+      <a routerLink="/books" class="brand-link">
+        <div class="brand-logo">BSN</div>
+        <span class="beta-tag">BETA</span>
+      </a>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="navbar-links">
+      <a routerLink="/books" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item home-link">
+        <i class="fas fa-home-alt"></i>
+        <span>Home</span>
+      </a>
+
+      <a routerLink="/books/featured" routerLinkActive="active" class="nav-item featured-link">
+        <i class="fas fa-star"></i>
+        <span>Featured</span>
+      </a>
+
+      <a routerLink="/books/my-books" routerLinkActive="active" class="nav-item my-books-link">
+        <i class="fas fa-book"></i>
+        <span>My Books</span>
+      </a>
+
+      <a routerLink="/books/favorites" routerLinkActive="active" class="nav-item favorites-link">
+        <i class="fas fa-heart"></i>
+        <span>Favorites</span>
+      </a>
+
+      <a routerLink="/books/archived-books" routerLinkActive="active" class="nav-item archive-link">
+        <i class="fas fa-archive"></i>
+        <span>Archived</span>
+      </a>
+
+      <a routerLink="/books/my-returned-books" routerLinkActive="active" class="nav-item return-link">
+        <i class="fa-solid fa-truck-fast"></i>
+        <span>Returned</span>
+      </a>
+
+      <a routerLink="/books/my-borrowed-books" routerLinkActive="active" class="nav-item borrow-link">
+        <i class="fas fa-list-check"></i>
+        <span>Borrowed</span>
+      </a>
+    </div>
+
+    <!-- Search and User Section -->
+    <div class="navbar-actions">
+      <div class="search-box">
+        <input type="text" [(ngModel)]="query" [ngModelOptions]="{standalone: true}" (keyup.enter)="onSearch()" placeholder="Find a book...">
+        <button (click)="onSearch()" class="search-btn">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+
+      <div class="user-dropdown" #userDropdown>
+        <div class="user-button" (click)="toggleDropdown($event)">
+          <div class="user-avatar" *ngIf="profileImageSrc; else userInitial">
+            <img [src]="profileImageSrc" alt="Profile">
+          </div>
+          <ng-template #userInitial>
+            <div class="user-initial">{{ getUserInitial() }}</div>
+          </ng-template>
+          <div class="user-info">
+            <span class="user-greeting">Hi,</span>
+            <span class="user-name">{{ userName }}</span>
+          </div>
+          <i class="fas fa-chevron-down dropdown-arrow" [class.open]="isDropdownOpen"></i>
+        </div>
+
+        <div class="dropdown-menu" [class.show]="isDropdownOpen">
+          <a class="dropdown-item" routerLink="/profile" (click)="closeDropdown()">
+            <i class="fas fa-user"></i>
+            <span>View Profile</span>
+          </a>
+          <a class="dropdown-item" routerLink="/profile/edit" (click)="closeDropdown()">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+          </a>
+          <a class="dropdown-item" routerLink="/dashboard" (click)="closeDropdown()">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+          </a>
+          <a class="dropdown-item" routerLink="/books/chat" (click)="closeDropdown()">
+            <i class="fas fa-comments"></i>
+            <span>Book Chat</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item logout-item" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,215 @@
+<div *ngIf="isConnected" class="app-container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Chat Application</h2>
+    </div>
+
+    <div class="sidebar-navigation">
+      <button class="nav-button" [class.active]="currentRoom === 'public'" (click)="goToPublicChat()">
+        <i class="fas fa-comments"></i>
+        <span>General Chat</span>
+      </button>
+    </div>
+
+    <div class="online-users">
+      <h3>Online Users</h3>
+
+      <!-- Current user -->
+      <div class="user-item current-user">
+        <div class="user-avatar" [style.backgroundColor]="getAvatarColor(username)">
+          {{ username.charAt(0).toUpperCase() }}
+        </div>
+        <div class="user-info">
+          <div class="user-name">{{ username }} (You)</div>
+          <div class="user-status">Active now</div>
+        </div>
+        <div class="online-indicator"></div>
+      </div>
+
+      <!-- Other online users -->
+      <div class="user-item"
+           *ngFor="let user of onlineUsers"
+           (click)="selectUser(user)"
+           [class.selected]="selectedUser?.username === user.username"
+           [class.has-new-message]="hasNewMessageFromUser(user.username)">
+        <div class="user-avatar" [style.backgroundColor]="getAvatarColor(user.username)">
+          {{ user.username.charAt(0).toUpperCase() }}
+        </div>
+        <div class="user-info">
+          <div class="user-name">{{ user.username }}</div>
+          <div class="user-status">{{ user.status || 'Active now' }}</div>
+        </div>
+        <div class="online-indicator"></div>
+        <!-- New message indicator -->
+        <div class="new-message-badge" *ngIf="hasNewMessageFromUser(user.username)">
+          {{ getNewMessageCount(user.username) }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Chat Area -->
+  <div class="main-chat">
+    <div class="chat-header">
+      <h2>{{ currentRoom === 'public' ? 'General Chat' : selectedUser?.username }}</h2>
+      <div class="header-actions">
+        <button (click)="toggleSearch()" title="Search">
+          <i class="fas fa-search"></i>
+        </button>
+        <button (click)="toggleInfo()" title="Info">
+          <i class="fas fa-info-circle"></i>
+        </button>
+        <button (click)="toggleSettings()" title="Settings">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar" *ngIf="showSearch">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Search messages..."
+        (keyup.enter)="search()"
+        (input)="searchQuery ? null : clearSearch()"
+      />
+      <button (click)="search()">
+        <i class="fas fa-search"></i>
+      </button>
+      <button *ngIf="searchQuery" (click)="clearSearch()" class="clear-btn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container">
+      <div *ngIf="connectingMessage" class="connecting">{{ connectingMessage }}</div>
+
+      <ul id="messageArea">
+        <li *ngFor="let message of getCurrentMessages()"
+            [ngClass]="{
+              'event-message': message.type !== 'CHAT',
+              'chat-message': message.type === 'CHAT',
+              'friend-message': isMessageFromFriend(message.sender),
+              'new-friend-message': isNewMessageFromFriend(message)
+            }">
+
+          <ng-container *ngIf="message.type === 'CHAT'">
+            <i [style.backgroundColor]="getAvatarColor(message.sender)">
+              {{ message.sender.charAt(0).toUpperCase() }}
+            </i>
+            <div class="message-content">
+              <div class="message-sender">{{ message.sender }}</div>
+              <p class="message-text" [innerHTML]="searchQuery ? highlightSearchResults(message.content) : message.content"></p>
+              <div class="message-time">{{ message.timestamp | date:'short' }}</div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="message.type !== 'CHAT'">
+            {{ message.sender }} {{ message.type === 'JOIN' ? 'joined the chat' : 'left the chat' }}
+          </ng-container>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Typing Area -->
+    <div class="typing-area">
+      <form (ngSubmit)="sendMessage()" id="typingArea">
+        <div class="form-group">
+          <div class="input-group">
+            <input
+              [(ngModel)]="message"
+              name="message"
+              type="text"
+              id="message"
+              placeholder="Type a message..."
+              autocomplete="off"
+            />
+            <button type="submit" class="primary">
+              <i class="fas fa-paper-plane"></i> Send
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" *ngIf="showSettings" (click)="toggleSettings()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button class="close-button" (click)="toggleSettings()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-item">
+          <label>
+            <input type="checkbox"
+                   [(ngModel)]="settings.notifications"
+                   (change)="requestNotificationPermission()" />
+            Enable notifications
+          </label>
+        </div>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" [(ngModel)]="settings.soundEnabled" />
+            Enable sound
+          </label>
+          <button class="test-sound-btn" (click)="testSound()" *ngIf="settings.soundEnabled">
+            Test Sound
+          </button>
+        </div>
+        <div class="setting-item">
+          <label>Theme</label>
+          <select [(ngModel)]="settings.theme" (change)="applyTheme()">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="primary" (click)="updateSettings()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Panel -->
+  <div class="info-panel" *ngIf="showInfo">
+    <div class="info-header">
+      <h3>Chat Information</h3>
+      <button class="close-button" (click)="toggleInfo()">×</button>
+    </div>
+    <div class="info-content">
+      <div class="info-item">
+        <span class="info-label">Current Chat:</span>
+        <span>{{ currentRoom === 'public' ? 'General Chat' : selectedUser?.username }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Online Users:</span>
+        <span>{{ onlineUsers.length + 1 }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Your Status:</span>
+        <span>Active</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Total Messages:</span>
+        <span>{{ getTotalMessages() }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Session Duration:</span>
+        <span>{{ getSessionDuration() }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Current Theme:</span>
+        <span>{{ settings.theme | titlecase }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Notifications:</span>
+        <span>{{ settings.notifications ? 'Enabled' : 'Disabled' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
